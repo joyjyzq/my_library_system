@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        {% if book.cover_image %}
+            <img src="{{ book.cover_image.url }}" class="img-fluid rounded" alt="{{ book.title }}">
+        {% else %}
+            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 300px;">No Image Available</div>
+        {% endif %}
+    </div>
+    <div class="col-md-8">
+        <h1>{{ book.title }}</h1>
+        <p class="lead">by {{ book.author }}</p>
+        <p><strong>ISBN:</strong> {{ book.isbn }}</p>
+        <p>{{ book.description }}</p>
+        <hr>
+        <p>
+            <strong>Status:</strong>
+            {% if book.is_available %}
+                <span class="badge bg-success">Available</span>
+            {% else %}
+                <span class="badge bg-danger">Borrowed</span>
+            {% endif %}
+        </p>
+        {% if user.is_authenticated and book.is_available %}
+            <a href="{% url 'books:borrow' book.pk %}" class="btn btn-primary">Borrow This Book</a>
+        {% elif user.is_authenticated and not book.is_available %}
+            <button class="btn btn-secondary" disabled>This book is currently borrowed</button>
+        {% else %}
+            <p><a href="{% url 'login' %}">Log in</a> to borrow this book.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

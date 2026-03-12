@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Library System{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% load static %}{% static 'css/style.css' %}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'home' %}">My Library</a>
+            <div class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                    <a class="nav-link" href="{% url 'books:catalog' %}">Catalog</a>
+                    <a class="nav-link" href="{% url 'users:profile' %}">My Account</a>
+                    {% if user.is_staff %}
+                        <a class="nav-link" href="{% url 'books:admin_dashboard' %}">Admin</a>
+                    {% endif %}
+                    <span class="navbar-text me-2">Hello, {{ user.username }}!</span>
+                    {% if user.is_authenticated %}
+                        <form id="logoutForm" action="{% url 'users:logout' %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-secondary">Log Out</button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'users:login' %}">Log In</a>
+                    {% endif %}
+                {% else %}
+                    <a class="nav-link" href="{% url 'users:login' %}">Login</a>
+                    <a class="nav-link" href="{% url 'users:register' %}">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% load static %}{% static 'js/main.js' %}"></script>
+</body>
+</html>

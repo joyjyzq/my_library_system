@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Book Catalog{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Book Catalog</h2>
+    <form class="d-flex" method="get">
+        <input class="form-control me-2" type="search" name="q" placeholder="Search by title..." value="{{ request.GET.q }}">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+</div>
+
+<div class="row">
+    {% for book in books %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            {% if book.cover_image %}
+                <img src="{{ book.cover_image.url }}" class="card-img-top" alt="{{ book.title }}" style="height: 200px; object-fit: cover;">
+            {% else %}
+                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">No Image</div>
+            {% endif %}
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ book.title }}</h5>
+                <p class="card-text">by {{ book.author }}</p>
+                <p class="text-muted">{{ book.description|truncatewords:20 }}</p>
+                <div class="mt-auto">
+                    <p class="card-text"><small class="text-muted">Status: 
+                        {% if book.is_available %}
+                            <span class="text-success">Available</span>
+                        {% else %}
+                            <span class="text-danger">Borrowed</span>
+                        {% endif %}
+                    </small></p>
+                    <a href="{% url 'books:detail' book.pk %}" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+        <p>No books found matching your search.</p>
+    {% endfor %}
+</div>
+{% endblock %}
